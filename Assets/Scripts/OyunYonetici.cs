@@ -9,6 +9,10 @@ public class OyunYonetici : MonoBehaviour
     [SerializeField] Sepet sepet;
     [SerializeField] int hedefPuan = 10;
     [SerializeField] int baslangicCan = 3;
+    [SerializeField] float kolayHiz = 3f;
+    [SerializeField] float zorHiz = 5f;
+    [SerializeField] float kolayAralik = 1.5f;
+    [SerializeField] float zorAralik = 1f;
 
     [Header("Yazılar")]
     [SerializeField] TMP_Text puanYazisi;
@@ -38,13 +42,13 @@ public class OyunYonetici : MonoBehaviour
 
         if (PlayerPrefs.GetInt("zorluk", 0) == 0)
         {
-            topHizi = 3f;
-            aralik = 1.5f;
+            topHizi = kolayHiz;
+            aralik = kolayAralik;
         }
         else
         {
-            topHizi = 5f;
-            aralik = 1f;
+            topHizi = zorHiz;
+            aralik = zorAralik;
         }
 
         yanSinir = Camera.main.orthographicSize * Camera.main.aspect - 0.5f;
@@ -68,7 +72,7 @@ public class OyunYonetici : MonoBehaviour
         float x = Random.Range(-yanSinir, yanSinir);
         float y = Camera.main.orthographicSize + 1f;
 
-        Top yeniTop = Instantiate(topPrefab, new Vector3(x, y, 0f), Quaternion.identity);
+        Top yeniTop = Instantiate(topPrefab, new Vector3(x, y, 0f), Quaternion.identity, transform);
         yeniTop.hiz = topHizi;
         yeniTop.yonetici = this;
         yeniTop.GetComponent<SpriteRenderer>().color = Random.ColorHSV(0f, 1f, 0.6f, 0.9f, 0.9f, 1f);
@@ -113,6 +117,11 @@ public class OyunYonetici : MonoBehaviour
         oyunBitti = true;
         sepet.hareketEdebilir = false;
         sonucPaneli.SetActive(true);
+
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            Destroy(transform.GetChild(i).gameObject);
+        }
 
         if (kazandi)
         {
